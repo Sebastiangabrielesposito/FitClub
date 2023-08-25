@@ -1,11 +1,15 @@
-import React, { useRef } from "react";
+import React, { useRef,useState } from "react";
 import './Join.css'
 import emailjs from '@emailjs/browser'
-
+import Swal from 'sweetalert2';
 
 const Join = () => {
 
-    const form = useRef()
+    
+
+
+    const [inputValue, setInputValue] = useState('');
+    const form = useRef(null)
 
     const sendEmail = (e) => {
         e.preventDefault();
@@ -17,10 +21,30 @@ const Join = () => {
             'OEWh-ueGzaTYjZKMe'
           )
           .then((result) => {
-              console.log(result.text);
+            console.log(result.text);
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-start',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.addEventListener('mouseenter', Swal.stopTimer)
+                  toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+              })
+              
+              Toast.fire({
+                icon: 'success',
+                title: 'Your message has been sent!'
+              })
+              
+              setInputValue(''); 
+
           }, (error) => {
               console.log(error.text);
           });
+          form.current.reset();
       };
 
 
@@ -39,7 +63,10 @@ const Join = () => {
             </div>
             <div className="right-j">
                 <form ref={form} className="email-container" onSubmit={sendEmail}>
-                    <input type="email" name="user_email" placeholder="Enter your Email address" />
+                    <input type="email" name="user_email" 
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Enter your Email address" />
                     <button className="btn btn-j">Join  Now</button>
                 </form>
             </div>
